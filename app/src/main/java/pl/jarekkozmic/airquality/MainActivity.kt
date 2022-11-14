@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import pl.jarekkozmic.airquality.ui.stationlist.StationListScreen
 import pl.jarekkozmic.airquality.ui.theme.AirQualityTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,22 +20,10 @@ class MainActivity : ComponentActivity() {
             AirQualityTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
+                    StationListScreen()
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    AirQualityTheme {
-        Greeting("Android")
-    }
-}
