@@ -47,7 +47,7 @@ class GetStationsUseCaseTest {
     @Test
     fun executeDoesNotMakesCallToRemoteWhenLocalDataIsNonEmpty() = runBlocking{
 
-        local.getAllResults = listOf(sampleAQStation)
+        local.getAllResults = listOf(sampleAQStation1)
 
         sut.execute()
 
@@ -62,7 +62,7 @@ class GetStationsUseCaseTest {
 
     @Test
     fun executeDoesMakeOneCallToLocalForNonEmptyData() = runBlocking {
-        local.getAllResults = listOf(sampleAQStation)
+        local.getAllResults = listOf(sampleAQStation1)
         sut.execute()
         assertEquals(1, local.getAllCallsCount)
     }
@@ -70,7 +70,7 @@ class GetStationsUseCaseTest {
     @Test
     fun executeWhenRemoteStationsWhenRemoteStationRepositoryIsCalled() = runBlocking {
         local.getAllResults = emptyList()
-        remote.getAllResults = listOf(sampleAQStation)
+        remote.getAllResults = listOf(sampleAQStation1)
 
         val actual  = sut.execute()
 
@@ -79,14 +79,36 @@ class GetStationsUseCaseTest {
 
     @Test
     fun executeReturnsLocalStationsWhenLocalRepositoryIsNotEmpty() = runBlocking {
-        local.getAllResults = listOf(sampleAQStation)
+        local.getAllResults = listOf(sampleAQStation1)
 
         val actual  = sut.execute()
 
         assertEquals("1", actual.first().id)
     }
 
-    var sampleAQStation = AQStation("1", "", "", "", "")
+    @Test
+    fun executeSaveStationsToLocalWhenRemoteIsNonEmpty() = runBlocking {
+        local.getAllResults = emptyList();
+        remote.getAllResults = listOf(sampleAQStation1)
+
+        sut.execute()
+
+        assertEquals(true, local.saveCalled)
+        assertEquals("1", local.saveReceivedArguments.first().id)
+    }
+
+    @Test
+    fun executeReturnsValidLocalListStations() = runBlocking {
+        val sampleAQStation2 = AQStation("2", "", "", "", "")
+        local.getAllResults = listOf(sampleAQStation1, sampleAQStation2)
+
+        val actual = sut.execute()
+
+        assertEquals("1", actual.first().id)
+        assertEquals("2", actual[1].id)
+    }
+
+    var sampleAQStation1 = AQStation("1", "", "", "", "")
 }
 
 class MockRemoteStationsRepository() : RemoteStationsRepository{
@@ -104,15 +126,15 @@ class MockRemoteStationsRepository() : RemoteStationsRepository{
 
 class MockLocalStationsRepository : LocalStationsRepository{
 
-    val getAllCalled : Boolean
+    val getAllCalled: Boolean
         get() = getAllCallsCount > 0
-    var getAllCallsCount : Int = 0
+    var getAllCallsCount: Int = 0
 
-    val saveAllCalled : Boolean
-        get() = saveAllCallsCount > 0
-    var saveAllCallsCount : Int = 0
-    var getAllResults : List<AQStation> = emptyList()
-
+    val saveCalled: Boolean
+        get() = saveCallsCount > 0
+    var saveCallsCount: Int = 0
+    var getAllResults: List<AQStation> = emptyList()
+    var saveReceivedArguments: List<AQStation> = emptyList()
 
     override suspend fun getAll(): List<AQStation> {
         getAllCallsCount++
@@ -120,7 +142,7 @@ class MockLocalStationsRepository : LocalStationsRepository{
     }
 
     override suspend fun save(stations: List<AQStation>) {
-        saveAllCallsCount++
+        saveCallsCount++
     }
 
 }
