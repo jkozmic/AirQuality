@@ -1,8 +1,11 @@
 package pl.jarekkozmic.airquality.di
 
+import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -11,6 +14,8 @@ import pl.jarekkozmic.airquality.data.AirlyStationDataSource
 import pl.jarekkozmic.airquality.data.airly.AirlyEndpoint
 import pl.jarekkozmic.airquality.data.airly.AirlyService
 import pl.jarekkozmic.airquality.data.local.InMemoryStationsRepository
+import pl.jarekkozmic.airquality.data.local.db.AppDatabase
+import pl.jarekkozmic.airquality.data.local.db.DatabaseStationsRepository
 import pl.jarekkozmic.airquality.logic.repository.LocalStationsRepository
 import pl.jarekkozmic.airquality.logic.repository.RemoteStationsRepository
 import retrofit2.Retrofit
@@ -30,8 +35,9 @@ class AirQualityProvider {
 
     @Provides
     @Singleton
-    fun provideLocalStationsRepository() : LocalStationsRepository{
-        return InMemoryStationsRepository()
+    fun provideLocalStationsRepository(@ApplicationContext appContext: Context) : LocalStationsRepository{
+        val dataBase = Room.databaseBuilder(appContext, AppDatabase::class.java, "AirQualityDb").build()
+        return DatabaseStationsRepository(dataBase)
     }
 
     @Provides
