@@ -1,9 +1,10 @@
-package pl.jarekkozmic.airquality.logic
+package pl.jarekkozmic.airquality.logic.usecase
 
 import pl.jarekkozmic.airquality.entity.AQStation
+import pl.jarekkozmic.airquality.logic.repository.RemoteStationsRepository
 import javax.inject.Inject
 
-class GetStationUseCase @Inject constructor(
+class GetStationsUseCase @Inject constructor(
     private val remoteStationsRepository: RemoteStationsRepository
 ){
 

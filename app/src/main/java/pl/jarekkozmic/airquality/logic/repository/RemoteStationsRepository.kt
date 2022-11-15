@@ -1,4 +1,4 @@
-package pl.jarekkozmic.airquality.logic
+package pl.jarekkozmic.airquality.logic.repository
 
 import pl.jarekkozmic.airquality.entity.AQStation
 
