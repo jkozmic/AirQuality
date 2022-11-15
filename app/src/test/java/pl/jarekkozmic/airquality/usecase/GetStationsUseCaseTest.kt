@@ -113,8 +113,11 @@ class GetStationsUseCaseTest {
 
 class MockRemoteStationsRepository() : RemoteStationsRepository{
 
+    //parametr sprawdzający czy funkcja getAllCalled została wywołana
     val getAllCalled : Boolean
         get() = getAllCallsCount > 0
+    //parametr sprawdzający ile razy funkcja getAllCalled została wywołana (sprawdzanie scenariuszy brzegowych
+    //przydatne aby zabezpieczyć przed błędami przy ewentualnej modyfikacji metody)
     var getAllCallsCount : Int = 0
     var getAllResults : List<AQStation> = emptyList()
 
@@ -126,6 +129,7 @@ class MockRemoteStationsRepository() : RemoteStationsRepository{
 
 class MockLocalStationsRepository : LocalStationsRepository{
 
+    //Parametry analogicznie do MockRemote
     val getAllCalled: Boolean
         get() = getAllCallsCount > 0
     var getAllCallsCount: Int = 0
@@ -143,6 +147,7 @@ class MockLocalStationsRepository : LocalStationsRepository{
 
     override suspend fun save(stations: List<AQStation>) {
         saveCallsCount++
+        saveReceivedArguments = stations
     }
 
 }
