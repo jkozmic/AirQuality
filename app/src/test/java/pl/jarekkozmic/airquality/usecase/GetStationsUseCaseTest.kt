@@ -30,10 +30,63 @@ class GetStationsUseCaseTest {
     }
 
     @Test
-    fun executeMakeOneCollToLocal() = runBlocking {
+    fun executeMakeOneCallToLocal() = runBlocking {
         sut.execute()
         assertEquals(1, local.getAllCallsCount)
     }
+
+    @Test
+    fun executeMakesCallToRemoteWhenLocalDataIsEmpty() = runBlocking{
+        local.getAllResults = emptyList()
+
+        sut.execute()
+
+        assertEquals(true, remote.getAllCalled)
+    }
+
+    @Test
+    fun executeDoesNotMakesCallToRemoteWhenLocalDataIsNonEmpty() = runBlocking{
+
+        local.getAllResults = listOf(sampleAQStation)
+
+        sut.execute()
+
+        assertEquals(false, remote.getAllCalled)
+    }
+
+    @Test
+    fun executeDoesMakeOneCallToLocal() = runBlocking {
+        sut.execute()
+        assertEquals(1, local.getAllCallsCount)
+    }
+
+    @Test
+    fun executeDoesMakeOneCallToLocalForNonEmptyData() = runBlocking {
+        local.getAllResults = listOf(sampleAQStation)
+        sut.execute()
+        assertEquals(1, local.getAllCallsCount)
+    }
+
+    @Test
+    fun executeWhenRemoteStationsWhenRemoteStationRepositoryIsCalled() = runBlocking {
+        local.getAllResults = emptyList()
+        remote.getAllResults = listOf(sampleAQStation)
+
+        val actual  = sut.execute()
+
+        assertEquals("1", actual.first().id)
+    }
+
+    @Test
+    fun executeReturnsLocalStationsWhenLocalRepositoryIsNotEmpty() = runBlocking {
+        local.getAllResults = listOf(sampleAQStation)
+
+        val actual  = sut.execute()
+
+        assertEquals("1", actual.first().id)
+    }
+
+    var sampleAQStation = AQStation("1", "", "", "", "")
 }
 
 class MockRemoteStationsRepository() : RemoteStationsRepository{
@@ -41,10 +94,11 @@ class MockRemoteStationsRepository() : RemoteStationsRepository{
     val getAllCalled : Boolean
         get() = getAllCallsCount > 0
     var getAllCallsCount : Int = 0
+    var getAllResults : List<AQStation> = emptyList()
 
     override suspend fun getAll(): List<AQStation> {
         getAllCallsCount++
-        return listOf()
+        return getAllResults
     }
 }
 
@@ -57,10 +111,12 @@ class MockLocalStationsRepository : LocalStationsRepository{
     val saveAllCalled : Boolean
         get() = saveAllCallsCount > 0
     var saveAllCallsCount : Int = 0
+    var getAllResults : List<AQStation> = emptyList()
+
 
     override suspend fun getAll(): List<AQStation> {
         getAllCallsCount++
-        return listOf()
+        return getAllResults
     }
 
     override suspend fun save(stations: List<AQStation>) {
