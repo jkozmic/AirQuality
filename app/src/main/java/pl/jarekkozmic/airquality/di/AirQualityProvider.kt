@@ -36,7 +36,8 @@ class AirQualityProvider {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
+    fun provideRetrofit(okHttpClient: OkHttpClient)
+    : Retrofit {
         return Retrofit
             .Builder()
             .client(okHttpClient)
@@ -47,13 +48,8 @@ class AirQualityProvider {
 
     @Provides
     @Singleton
-    fun provideAirlyService() : AirlyStationDataSource.AirlyService{
-        return Retrofit
-            .Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(AirlyStationDataSource.HOST)
-            .build()
-            .create(AirlyStationDataSource.AirlyService::class.java)
+    fun provideAirlyService(retrofit: Retrofit) : AirlyStationDataSource.AirlyService{
+        return retrofit.create(AirlyStationDataSource.AirlyService::class.java)
     }
 }
 
