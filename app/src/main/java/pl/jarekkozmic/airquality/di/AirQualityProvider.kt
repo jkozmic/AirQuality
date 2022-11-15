@@ -10,6 +10,8 @@ import okhttp3.Response
 import pl.jarekkozmic.airquality.data.AirlyStationDataSource
 import pl.jarekkozmic.airquality.data.airly.AirlyEndpoint
 import pl.jarekkozmic.airquality.data.airly.AirlyService
+import pl.jarekkozmic.airquality.data.local.InMemoryStationsRepository
+import pl.jarekkozmic.airquality.logic.repository.LocalStationsRepository
 import pl.jarekkozmic.airquality.logic.repository.RemoteStationsRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,6 +26,12 @@ class AirQualityProvider {
     @Singleton
     fun provideRemoteStationsRepository(airlyService: AirlyService) : RemoteStationsRepository {
         return AirlyStationDataSource(airlyService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLocalStationsRepository() : LocalStationsRepository{
+        return InMemoryStationsRepository()
     }
 
     @Provides
