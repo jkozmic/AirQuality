@@ -71,7 +71,7 @@ class AirQualityProvider {
 class AirlyAuthInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val requestBuilder = chain.request().newBuilder()
-        requestBuilder.addHeader("apikey", "EcidBF6LdhzqVc37PmDt6TQyS0qRl0Vt")
+        requestBuilder.addHeader("apikey", "YOUR_KEY")
         return chain.proceed(requestBuilder.build())
     }
 }
